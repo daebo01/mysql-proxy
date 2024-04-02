@@ -33,7 +33,7 @@ func main2() error {
 		return fmt.Errorf("loading server key pair: %s", err)
 	}
 
-	tlsConfig := tls.Config{Certificates: []tls.Certificate{serverCert}}
+	tlsConfig := &tls.Config{Certificates: []tls.Certificate{serverCert}}
 	tlsConfig.Rand = rand.Reader
 
 	proxy := MysqlProxy{
@@ -49,7 +49,7 @@ func main2() error {
 type MysqlProxy struct {
 	listenAddr string
 	serverAddr string
-	tlsConfig  tls.Config
+	tlsConfig  *tls.Config
 	debug      bool
 }
 
@@ -139,7 +139,7 @@ func (p MysqlProxy) connectServerAndClient(rawClientConn net.Conn, rawServerConn
 	wantsTLS := clientHandshakeBytes[0] == tlsInitPktLen
 
 	if wantsTLS {
-		clientConn = NewReadableConn(tls.Server(clientConn.Conn, &p.tlsConfig), "client-tls")
+		clientConn = NewReadableConn(tls.Server(clientConn.Conn, p.tlsConfig), "client-tls")
 
 		// do not send initial tls pkt to server
 		var err error

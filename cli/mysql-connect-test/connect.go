@@ -5,8 +5,9 @@ import (
 	"crypto/x509"
 	"database/sql"
 	"fmt"
+	"os"
+
 	"github.com/go-sql-driver/mysql"
-	"io/ioutil"
 )
 
 func main() {
@@ -32,7 +33,7 @@ func withoutTLS() {
 
 func withTLS() {
 	rootCertPool := x509.NewCertPool()
-	pem, err := ioutil.ReadFile("/tmp/server-ca.pem")
+	pem, err := os.ReadFile("/tmp/server-ca.pem")
 	if err != nil {
 		panic(err)
 	}
